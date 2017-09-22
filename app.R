@@ -16,7 +16,7 @@ source("modules/delete.R", local = TRUE)
 pool <- dbPool(RSQLite::SQLite(), dbname = "db.sqlite")
 
 tbls <- reactiveFileReader(500, NULL, "db.sqlite",
-  function(x) db_list_tables(pool)
+  function(x) DBI::dbListTables(pool)
 )
 
 ui <- dashboardPage(skin = "black",
