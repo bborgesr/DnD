@@ -28,4 +28,13 @@ for (i in 1:length(feats_first_raw)) {
   } else feats_prereq[i] <- NA
 }
 
-feats_tbl <- tibble(name = feats_name, prereq = feats_prereq)
+feats_second <- character(0)
+feats_ul <- character(0)
+
+feats_first <- html_nodes(feats_raw, "h3 + p:not(i)") %>% html_text
+feats_second <- html_nodes(feats_raw, "h3 + p + p") %>% html_text
+feats_ul <- html_nodes(feats_raw, "h3 + p + ul") %>% html_text
+
+
+feats_tbl <- tibble(name = feats_name, prereq = feats_prereq, stdescription = feats_first, nddescription = feats_second, uldescription = feats_ul)
+
