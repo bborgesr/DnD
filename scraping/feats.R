@@ -1,6 +1,9 @@
 library(rvest)
 library(tibble)
 library(dplyr)
+library(glue)
+library(DT)
+library(magrittr)
 
 feats_raw <- read_html("http://engl393-dnd5th.wikia.com/wiki/Feats")
 
@@ -28,13 +31,18 @@ for (i in 1:length(feats_first_raw)) {
   } else feats_prereq[i] <- NA
 }
 
-feats_second <- character(0)
-feats_ul <- character(0)
+feats_desc <- character(0)
+for (i in 1:length(feats_name)) {
+  ith_item <- html_nodes(feats_raw, xpath = glue("//*[count(preceding-sibling::h3)={i}]"))
+  nxt <- which(html_name(ith_item) == "h3")
+  if (length(nxt != 0)) ith_item <- ith_item %>% extract(1:(nxt - 1))
+  feats_desc[i] <- paste(ith_item, collapse = " ")
+}
 
-feats_first <- html_nodes(feats_raw, "h3 + p:not(i)") %>% html_text
-feats_second <- html_nodes(feats_raw, "h3 + p + p") %>% html_text
-feats_ul <- html_nodes(feats_raw, "h3 + p + ul") %>% html_text
+feats_tbl <- tibble(
+  name = feats_name, 
+  prereq = feats_prereq, 
+  description = feats_desc
+)
 
-
-feats_tbl <- tibble(name = feats_name, prereq = feats_prereq, stdescription = feats_first, nddescription = feats_second, uldescription = feats_ul)
-
+datatable(feats_tbl, escape = FALSE)
