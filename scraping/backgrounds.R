@@ -10,9 +10,8 @@ backgrounds_names <- sub("\\(.*", "", backgrounds_names_raw)
 backgrounds_names <- trimws(backgrounds_names, which = c("both"))
 
        
-backgrounds_names_url <- sub(" ", "_", backgrounds_names)
-backgrounds_names_url[2] <- "Black_Fist_Double_Agent"
-backgrounds_names_url[50] <- "Urban_Bounty_Hunter"
+backgrounds_names_url <- gsub(" ", "_", backgrounds_names, fixed = TRUE)
+
 
 isOverview <- function(text) {
   init <- substr(text, 1, 9)
