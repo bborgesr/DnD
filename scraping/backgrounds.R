@@ -13,22 +13,24 @@ backgrounds_names <- trimws(backgrounds_names, which = c("both"))
 backgrounds_names_url <- sub(" ", "_", backgrounds_names)
 backgrounds_names_url[2] <- "Black_Fist_Double_Agent"
 backgrounds_names_url[50] <- "Urban_Bounty_Hunter"
-backgrounds_names_url
-
-for(i in 1:length(backgrounds_names_url)){
-  url <- backgrounds_names_url[i]
-  backgrounds_pages_raw <- read_html(url)
-  backgrounds_overview_header <- html_nodes(backgrounds_pages_raw, ".mw-content-text + h2") %>% html_text()
-  if(isOverview(backgrounds_overview_header)){
-    backgrounds_overview <- html_nodes(backgrounds_pages_raw, ".mw-content-text + h2 + p") %>% html_text()
-  }
-  
-}
 
 isOverview <- function(text) {
-  init <- substr(text, 1, 8)
-  if (init == "Overview") TRUE
+  init <- substr(text, 1, 9)
+  if (init == " Overview") TRUE
   else FALSE
+}
+
+for(i in 1:length(backgrounds_names_url)){
+  url <- paste("http://engl393-dnd5th.wikia.com/wiki/", backgrounds_names_url[i], sep = "")
+  backgrounds_pages_raw <- read_html(url)
+  backgrounds_overview_header <- html_nodes(backgrounds_pages_raw, ".mw-content-text h2") %>% html_text()
+  
+  for(i in 1:length(backgrounds_overview_header)){
+    if(isOverview(backgrounds_overview_header[i])){
+      backgrounds_overview <- html_nodes(backgrounds_pages_raw, ".mw-content-text + h2 + p") %>% html_text()
+    }
+  }
+
 }
 
 isFeature <- function(text) {
