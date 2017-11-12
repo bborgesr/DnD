@@ -1,6 +1,9 @@
 library(rvest)
 library(tibble)
 library(dplyr)
+library(glue)
+library(DT)
+library(magrittr)
 
 backgrounds_raw <- read_html("http://engl393-dnd5th.wikia.com/wiki/Backgrounds")
 
@@ -20,10 +23,12 @@ isOverview <- function(text) {
 backgrounds_overview_header_list <- list()
 backgrounds_overview_header <- character(0)
 backgrounds_overview <- character(0)
+urls <- character(0)
 
 for (i in 1:length(backgrounds_names_url)) {
   url <- paste("http://engl393-dnd5th.wikia.com/wiki/", backgrounds_names_url[i], sep = "")
   try_url <- try(backgrounds_pages_raw <- read_html(url))
+  urls[i] <- url
   if (inherits(try_url, "try-error")) next
   else {
     backgrounds_overview_header <- html_nodes(backgrounds_pages_raw, ".mw-content-text h2") %>% html_text()
@@ -36,19 +41,24 @@ for (i in 1:length(backgrounds_names_url)) {
   }
 }
 
+names(backgrounds_overview_header_list) <- backgrounds_names
 
 
+backgrounds_overview <- backgrounds_overview_header_list
 
-backgrounds_overview <- character(0)
 for (i in 1:length(backgrounds_overview_header_list)) {
-  ith_item <- html_nodes(backgrounds_pages_raw, xpath = glue("//*[count(preceding-sibling::h2)={i}]"))
-  nxt <- which(html_name(ith_item) == "h2")
-  if (length(nxt != 0)) ith_item <- ith_item %>% extract(1:(nxt - 1))
-  backgrounds_overview[i] <- paste(ith_item, collapse = " ")
+  ith_background <- try(read_html(urls[i]))
+  if (inherits(ith_background, "try-error")) next
+  else {
+    ith_item <- html_nodes(ith_background, xpath = glue("//*[count(preceding-sibling::h2)={i}]"))
+    nxt <- which(html_name(ith_item) == "h2")
+    if (length(nxt != 0)) ith_item <- ith_item %>% extract(1:(nxt - 1))
+    backgrounds_overview[i] <- paste(ith_item, collapse = " ")
+  }
 }
 
 
-
+datatable(tibble(backgrounds_overview), escape = FALSE)
 
 
 
