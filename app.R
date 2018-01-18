@@ -1,3 +1,4 @@
+library(htmltools)
 library(shiny)
 library(shinydashboard)
 

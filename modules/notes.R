@@ -4,13 +4,11 @@ notesModUI <- function(id) {
   tagList(
     withTags(
       ul(
-        li(a("Mock session", href = "data/notes/mock-session.html", target='blank')),
-        li(a("Mock session", href = "data/notes/mock-inventory.html", target='blank'))
+        li(a("Mock session", href = "notes/mock-session.html", target = "blank")),
+        li(a("Mock inventory", href = "notes/mock-inventory.html", target = "blank"))
       )
     )
   )
 }
 
-notesMod <- function(input, output, session) {
-  print(file.exists("data/notes/mock-session.html"))
-}
+notesMod <- function(input, output, session) {}
